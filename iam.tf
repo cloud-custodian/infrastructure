@@ -33,7 +33,13 @@ data "aws_iam_policy_document" "c7n-aws-functional-test-runner" {
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
+      "codebuild:CreateReportGroup",
+      "codebuild:CreateReport",
+      "codebuild:UpdateReport",
+      "codebuild:BatchPutTestCases",
+      "codebuild:BatchPutCodeCoverages"
     ]
+
   }
 
   statement {
