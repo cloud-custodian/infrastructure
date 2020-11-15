@@ -14,7 +14,7 @@ phases:
     - . /venv/bin/activate
 
     # setup creds
-    - aws secretsmanager get-secret-value --secret-id functional-testing/c7n-gcp-functional --output text --query SecretString > /gcp_credentials.json
+    - aws secretsmanager get-secret-value --secret-id functional-testing/c7n-gcp-functional --output text --query SecretString > /google_credentials.json
     - export GOOGLE_CLOUD_PROJECT=c7n-test-target
     - export GOOGLE_APPLICATION_CREDENTIALS="/google_credentials.json"
 
