@@ -1,0 +1,35 @@
+version: 0.2
+env:
+  variables:
+    C7N_FUNCTIONAL: true
+  exported-variables:
+  - C7N_FUNCTIONAL
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands: # todo (mc): build a virtual environment and specify custom pip cache
+
+    # setup creds
+    - export TEMP_ROLE="$(aws sts assume-role --role-arn ${target_role} --role-session-name test-runner-test-target)"
+    - export AWS_ACCESS_KEY_ID=$(echo "$TEMP_ROLE" | jq -r '.Credentials.AccessKeyId')
+    - export AWS_SECRET_ACCESS_KEY=$(echo "$TEMP_ROLE" | jq -r '.Credentials.SecretAccessKey')
+    - export AWS_SESSION_TOKEN=$(echo "$TEMP_ROLE" | jq -r '.Credentials.SessionToken')
+
+    # install tf
+    - wget -q https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip
+    - unzip -qq terraform*.zip
+    - mv terraform /usr/local/bin
+
+    # run tests
+    - pip install --cache-dir=./.pip-cache -qr requirements.txt
+  build:
+    commands:
+    - pytest tests -m terraform -n auto
+  post_build:
+    commands:
+    - echo 'aws_nuke'
+cache:
+  paths:
+    - tests/terraform/.tfcache
+    - .pip-cache

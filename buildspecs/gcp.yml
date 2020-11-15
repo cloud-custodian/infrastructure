@@ -1,0 +1,47 @@
+version: 0.2
+env:
+  variables:
+    C7N_FUNCTIONAL: true
+  exported-variables:
+  - C7N_FUNCTIONAL
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+    # setup virtualenv
+    - python -m venv /venv
+    - . /venv/bin/activate
+
+    # setup creds
+    - aws secretsmanager get-secret-value --secret-id functional-testing/c7n-gcp-functional --output text --query SecretString > /gcp_credentials.json
+    - export GOOGLE_CLOUD_PROJECT=c7n-test-target
+    - export GOOGLE_APPLICATION_CREDENTIALS="/google_credentials.json"
+
+    # setup terraform
+    - wget -q https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip
+    - unzip -qq terraform*.zip
+    - mv terraform /usr/local/bin
+
+    # setup gcp
+    - pip install -qr requirements.txt -r tools/c7n_gcp/requirements.txt
+    - python setup.py -q install
+    - cd tools/c7n_gcp
+    - mkdir reports
+    - python setup.py -q install
+    - pip install git+https://github.com/cloud-custodian/pytest-terraform.git@better-logging
+  build:
+    commands:
+    - pytest tests -s -v --junit-xml=reports -m terraform -n auto
+  post_build:
+    commands:
+    - echo 'gcp_nuke'
+reports:
+  gcp-ftests:
+    files:
+      - "tools/c7n_gcp/reports/*.xml"
+    file-format: "JUNITXML"
+cache:
+  paths:
+    - .pip-cache
+
