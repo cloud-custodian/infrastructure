@@ -32,12 +32,12 @@ phases:
     - pip install git+https://github.com/cloud-custodian/pytest-terraform.git@better-logging
   build:
     commands:
-    - pytest tests -s -v --junit-xml=reports -m terraform -n auto
+    - pytest tests -s -v --junit-xml=reports/gcp.xml -m terraform -n auto
   post_build:
     commands:
     - echo 'gcp_nuke'
 reports:
-  gcp-ftests:
+  ftests:
     files:
       - "tools/c7n_gcp/reports/*.xml"
     file-format: "JUNITXML"
