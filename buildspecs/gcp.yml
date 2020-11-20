@@ -39,7 +39,7 @@ phases:
 reports:
   ftests:
     files:
-      - "tools/c7n_gcp/reports/*.xml"
+      - "reports/*.xml"
     file-format: "JUNITXML"
 cache:
   paths:

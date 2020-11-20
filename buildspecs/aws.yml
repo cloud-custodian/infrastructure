@@ -25,10 +25,15 @@ phases:
     - pip install --cache-dir=./.pip-cache -qr requirements.txt
   build:
     commands:
-    - pytest tests -m terraform -n auto
+    - pytest tests -m terraform -n auto --junit-xml=report-aws.xml
   post_build:
     commands:
     - echo 'aws_nuke'
+reports:
+  ftests:
+    files:
+      - "report-aws.xml"
+    file-format: "JUNITXML"
 cache:
   paths:
     - tests/terraform/.tfcache
