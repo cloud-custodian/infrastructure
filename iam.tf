@@ -185,6 +185,83 @@ resource "aws_iam_policy_attachment" "c7n-gcp-functional-test-runner" {
 
 
 #
+# C7N Azure Functional Test Runner
+data "aws_iam_policy_document" "c7n-azure-functional-assume-role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["codebuild.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "c7n-azure-functional" {
+  name = "c7n-azure-functional"
+
+  assume_role_policy = data.aws_iam_policy_document.c7n-azure-functional-assume-role.json
+}
+
+data "aws_iam_policy_document" "c7n-azure-functional-test-runner" {
+  statement {
+    resources = ["*"]
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "codebuild:CreateReportGroup",
+      "codebuild:CreateReport",
+      "codebuild:UpdateReport",
+      "codebuild:BatchPutTestCases",
+      "codebuild:BatchPutCodeCoverages"
+    ]
+  }
+
+  statement {
+    resources = [
+      data.aws_secretsmanager_secret.c7n-azure-functional.arn,
+    ]
+
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+  }
+
+  statement {
+    actions = ["cloudwatch:*"]
+    resources = ["*"]
+  }
+
+  statement {
+    actions = [
+      "ssmmessages:CreateControlChannel",
+      "ssmmessages:CreateDataChannel",
+      "ssmmessages:OpenControlChannel",
+      "ssmmessages:OpenDataChannel",
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "c7n-azure-functional-test-runner" {
+  name   = "c7n-azure-functional-test-runner"
+  policy = data.aws_iam_policy_document.c7n-azure-functional-test-runner.json
+}
+
+resource "aws_iam_policy_attachment" "c7n-azure-functional-test-runner" {
+  name       = "c7n-azure-functional-test-runner"
+  policy_arn = aws_iam_policy.c7n-azure-functional-test-runner.arn
+
+  roles = [
+    aws_iam_role.c7n-azure-functional.name,
+  ]
+}
+#
+
+
+#
 # C7N CloudWatch Codebuild
 data "aws_iam_policy_document" "c7n-nightly-assume-role" {
   statement {

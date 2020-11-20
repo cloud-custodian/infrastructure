@@ -1,0 +1,45 @@
+version: 0.2
+env:
+  variables:
+    C7N_FUNCTIONAL: true
+    C7N_TEST_RUN: true
+  exported-variables:
+  - C7N_FUNCTIONAL
+  - C7N_TEST_RUN
+  secrets-manager:
+    AZURE_CLIENT_ID: "functional-testing/c7n-azure-functional:AZURE_CLIENT_ID"
+    AZURE_CLIENT_SECRET: "functional-testing/c7n-azure-functional:AZURE_CLIENT_SECRET"
+    AZURE_SUBSCRIPTION_ID: "functional-testing/c7n-azure-functional:AZURE_SUBSCRIPTION_ID"
+    AZURE_TENANT_ID: "functional-testing/c7n-azure-functional:AZURE_TENANT_ID"
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+    - python -m venv /venv
+    - . /venv/bin/activate
+    - python -m pip install --upgrade pip && pip install . && pip install -r requirements-dev.txt
+    - wget -q https://releases.hashicorp.com/terraform/0.13.3/terraform_0.13.3_linux_amd64.zip
+    - unzip -qq terraform*.zip
+    - mv terraform /usr/local/bin
+    - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+    - az login --service-principal -u $${AZURE_CLIENT_ID} -p $${AZURE_CLIENT_SECRET} --tenant $${AZURE_TENANT_ID} && az account set -s $${AZURE_SUBSCRIPTION_ID}
+
+
+  pre_build:
+    commands:
+    - /bin/bash tools/c7n_azure/tests_azure/templates/provision.sh --skip keyvault cost-management-export containerservice databricks postgresql 
+    
+  build:
+    commands:
+    - pytest -v -m "not skiplive" tools/c7n_azure/tests_azure
+
+  post_build:
+    commands:
+    - /bin/bash tools/c7n_azure/tests_azure/templates/cleanup.sh --skip keyvault cost-management-export containerservice databricks postgresql
+
+cache:
+  paths:
+    - .pip-cache
+
+

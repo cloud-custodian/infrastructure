@@ -18,3 +18,10 @@ resource "aws_cloudwatch_event_target" "c7n-nightly-gcp-functional" {
   arn       = aws_codebuild_project.c7n-gcp-functional.arn
   role_arn  = aws_iam_role.c7n-nightly.arn
 }
+
+resource "aws_cloudwatch_event_target" "c7n-nightly-azure-functional" {
+  rule      = aws_cloudwatch_event_rule.c7n-nightly.name
+  target_id = "c7n-nightly-azure-functional"
+  arn       = aws_codebuild_project.c7n-azure-functional.arn
+  role_arn  = aws_iam_role.c7n-nightly.arn
+}

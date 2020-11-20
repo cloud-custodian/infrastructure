@@ -74,3 +74,38 @@ resource "aws_codebuild_project" "c7n-gcp-functional" {
       terraform_version = local.build_tf_version})
   }
 }
+
+resource "aws_codebuild_project" "c7n-azure-functional" {
+  name           = "c7n-azure-functional"
+  description    = "Run Cloud Custodian Azure Functional Tests"
+  build_timeout  = "180"
+  queued_timeout = "60"
+  badge_enabled  = true
+  source_version = "master"
+
+  service_role = aws_iam_role.c7n-azure-functional.arn
+
+  artifacts {
+    type = "NO_ARTIFACTS"
+  }
+
+  # TODO - move to S3 Cache, local is useless for our use cases.
+  cache {
+    type  = "LOCAL"
+    modes = ["LOCAL_DOCKER_LAYER_CACHE", "LOCAL_SOURCE_CACHE", "LOCAL_CUSTOM_CACHE"]
+  }
+
+  environment {
+    compute_type = "BUILD_GENERAL1_LARGE"
+    image        = "aws/codebuild/standard:4.0"
+    type         = "LINUX_CONTAINER"
+  }
+
+  source {
+    type            = "GITHUB"
+    location        = "https://github.com/cloud-custodian/cloud-custodian.git"
+    git_clone_depth = 1
+    buildspec       = templatefile("buildspecs/azure.yml", {
+      terraform_version = local.build_tf_version})
+  }
+}
