@@ -1,11 +1,13 @@
 version: 0.2
 env:
   variables:
+    TF_VERSION: 0.13.3
     C7N_FUNCTIONAL: true
     C7N_TEST_RUN: true
   exported-variables:
   - C7N_FUNCTIONAL
   - C7N_TEST_RUN
+  - TF_VERSION
   secrets-manager:
     AZURE_CLIENT_ID: "functional-testing/c7n-azure-functional:AZURE_CLIENT_ID"
     AZURE_CLIENT_SECRET: "functional-testing/c7n-azure-functional:AZURE_CLIENT_SECRET"
@@ -19,7 +21,7 @@ phases:
     - python -m venv /venv
     - . /venv/bin/activate
     - python -m pip install --upgrade pip && pip install . && pip install -r requirements-dev.txt
-    - wget -q https://releases.hashicorp.com/terraform/0.13.3/terraform_0.13.3_linux_amd64.zip
+    - wget -q https://releases.hashicorp.com/terraform/$${TF_VERSION}/terraform_$${TF_VERSION}_linux_amd64.zip
     - unzip -qq terraform*.zip
     - mv terraform /usr/local/bin
     - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
@@ -28,18 +30,17 @@ phases:
 
   pre_build:
     commands:
-    - /bin/bash tools/c7n_azure/tests_azure/templates/provision.sh --skip keyvault cost-management-export containerservice databricks postgresql 
-    
+    - /bin/bash tools/c7n_azure/tests_azure/templates/cleanup.sh --skip keyvault cost-management-export containerservice apimanagement
+    - /bin/bash tools/c7n_azure/tests_azure/templates/provision.sh --skip keyvault cost-management-export containerservice apimanagement
+
   build:
     commands:
     - pytest -v -m "not skiplive" tools/c7n_azure/tests_azure
 
   post_build:
     commands:
-    - /bin/bash tools/c7n_azure/tests_azure/templates/cleanup.sh --skip keyvault cost-management-export containerservice databricks postgresql
+    - /bin/bash tools/c7n_azure/tests_azure/templates/cleanup.sh --skip keyvault cost-management-export containerservice apimanagement
 
 cache:
   paths:
     - .pip-cache
-
-
