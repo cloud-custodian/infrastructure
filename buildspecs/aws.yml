@@ -23,6 +23,7 @@ phases:
 
     # run tests
     - pip install --cache-dir=./.pip-cache -qr requirements.txt
+    - mkdir -p .tfcache
   build:
     commands:
     - pytest tests -m terraform -n auto --junit-xml=report-aws.xml
@@ -36,5 +37,6 @@ reports:
     file-format: "JUNITXML"
 cache:
   paths:
+    - .tfcache
     - tests/terraform/.tfcache
     - .pip-cache
