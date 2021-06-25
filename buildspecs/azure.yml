@@ -30,8 +30,8 @@ phases:
 
   pre_build:
     commands:
-    - /bin/bash tools/c7n_azure/tests_azure/templates/cleanup.sh --skip keyvault cost-management-export containerservice apimanagement
-    - /bin/bash tools/c7n_azure/tests_azure/templates/provision.sh --skip keyvault cost-management-export containerservice apimanagement
+    - /bin/bash tools/c7n_azure/tests_azure/templates/cleanup.sh --skip keyvault cost-management-export containerservice apimanagement databricks search
+    - /bin/bash tools/c7n_azure/tests_azure/templates/provision.sh --skip keyvault cost-management-export containerservice apimanagement databricks search
 
   build:
     commands:
@@ -39,7 +39,7 @@ phases:
 
   post_build:
     commands:
-    - /bin/bash tools/c7n_azure/tests_azure/templates/cleanup.sh --skip keyvault cost-management-export containerservice apimanagement
+    - /bin/bash tools/c7n_azure/tests_azure/templates/cleanup.sh --skip keyvault cost-management-export containerservice apimanagement databricks search
 
 cache:
   paths:

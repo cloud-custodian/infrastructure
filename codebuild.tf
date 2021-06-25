@@ -6,7 +6,7 @@ locals {
 resource "aws_codebuild_project" "c7n-aws-functional" {
   name           = "c7n-aws-functional"
   description    = "Run Cloud Custodian AWS Functional Tests"
-  build_timeout  = "15"
+  build_timeout  = "60"
   queued_timeout = "60"
   badge_enabled  = true
   source_version = "master"
