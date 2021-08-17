@@ -96,7 +96,7 @@ resource "aws_codebuild_project" "c7n-azure-functional" {
   }
 
   environment {
-    compute_type = "BUILD_GENERAL1_LARGE"
+    compute_type = "BUILD_GENERAL1_SMALL"
     image        = "aws/codebuild/standard:4.0"
     type         = "LINUX_CONTAINER"
   }
