@@ -33,9 +33,9 @@ resource "aws_codebuild_project" "c7n-aws-functional" {
     type            = "GITHUB"
     location        = "https://github.com/cloud-custodian/cloud-custodian.git"
     git_clone_depth = 1
-    buildspec       = templatefile("buildspecs/aws.yml", {
+    buildspec = templatefile("buildspecs/aws.yml", {
       terraform_version = local.build_tf_version,
-      target_role = aws_iam_role.test-runner-test-target.arn})
+    target_role = aws_iam_role.test-runner-test-target.arn })
   }
 }
 
@@ -70,8 +70,8 @@ resource "aws_codebuild_project" "c7n-gcp-functional" {
     type            = "GITHUB"
     location        = "https://github.com/cloud-custodian/cloud-custodian.git"
     git_clone_depth = 1
-    buildspec       = templatefile("buildspecs/gcp.yml", {
-      terraform_version = local.build_tf_version})
+    buildspec = templatefile("buildspecs/gcp.yml", {
+    terraform_version = local.build_tf_version })
   }
 }
 
@@ -105,7 +105,7 @@ resource "aws_codebuild_project" "c7n-azure-functional" {
     type            = "GITHUB"
     location        = "https://github.com/cloud-custodian/cloud-custodian.git"
     git_clone_depth = 1
-    buildspec       = templatefile("buildspecs/azure.yml", {
-      terraform_version = local.build_tf_version})
+    buildspec = templatefile("buildspecs/azure.yml", {
+    terraform_version = local.build_tf_version })
   }
 }

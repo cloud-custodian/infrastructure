@@ -43,7 +43,7 @@ data "aws_iam_policy_document" "c7n-aws-functional-test-runner" {
   }
 
   statement {
-    actions = ["cloudwatch:*"]
+    actions   = ["cloudwatch:*"]
     resources = ["*"]
   }
 }
@@ -85,12 +85,12 @@ data "aws_iam_policy_document" "test-runner-test-target-access" {
 
 resource "aws_iam_policy" "test-runner-test-target-access" {
   provider = aws.target-a
-  name   = "test-runner-test-target-access"
-  policy = data.aws_iam_policy_document.test-runner-test-target-access.json
+  name     = "test-runner-test-target-access"
+  policy   = data.aws_iam_policy_document.test-runner-test-target-access.json
 }
 
 resource "aws_iam_policy_attachment" "test-runner-test-target-access" {
-  provider = aws.target-a
+  provider   = aws.target-a
   name       = "test-runner-test-target-access"
   policy_arn = aws_iam_policy.test-runner-test-target-access.arn
 
@@ -100,7 +100,7 @@ resource "aws_iam_policy_attachment" "test-runner-test-target-access" {
 }
 
 resource "aws_iam_role" "test-runner-test-target" {
-  provider = aws.target-a
+  provider           = aws.target-a
   name               = "test-runner-test-target"
   assume_role_policy = data.aws_iam_policy_document.test-runner-assume-role.json
 }
@@ -153,7 +153,7 @@ data "aws_iam_policy_document" "c7n-gcp-functional-test-runner" {
   }
 
   statement {
-    actions = ["cloudwatch:*"]
+    actions   = ["cloudwatch:*"]
     resources = ["*"]
   }
 
@@ -230,7 +230,7 @@ data "aws_iam_policy_document" "c7n-azure-functional-test-runner" {
   }
 
   statement {
-    actions = ["cloudwatch:*"]
+    actions   = ["cloudwatch:*"]
     resources = ["*"]
   }
 
@@ -292,7 +292,7 @@ data "aws_iam_policy_document" "c7n-nightly" {
   }
 
   statement {
-    actions = ["codebuild:*"]
+    actions   = ["codebuild:*"]
     resources = ["*"]
   }
 }
