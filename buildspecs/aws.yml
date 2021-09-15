@@ -26,7 +26,7 @@ phases:
     - mkdir -p .tfcache
   build:
     commands:
-    - pytest tests -m terraform -n auto --junit-xml=report-aws.xml
+    - pytest tests -m "not skiplive" -m terraform -n auto --junit-xml=report-aws.xml
   post_build:
     commands:
     - echo 'aws_nuke'
